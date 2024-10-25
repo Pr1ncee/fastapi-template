@@ -24,10 +24,10 @@ class RedisRequestCachingService:
 
     @catch_exceptions((RedisError, TypeError))
     async def set_cache(
-            self,
-            key: str,
-            response: dict,
-            expire: timedelta = general_config.REDIS_CACHE_EXPIRE_TIME,
+        self,
+        key: str,
+        response: dict,
+        expire: timedelta = general_config.REDIS_CACHE_EXPIRE_TIME,
     ) -> None:
         await self.redis.setex(self.prefix + key, expire, serialize_json(response))
 

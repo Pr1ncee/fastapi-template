@@ -1,1 +1,1 @@
-from src.db.db import Base, get_session
+from src.db.db import Base as Base

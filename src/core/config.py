@@ -7,9 +7,9 @@ load_dotenv()
 
 
 class GeneralConfig:
-    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "").split(',')
-    CORS_METHODS = os.getenv("CORS_METHODS", "").split(',')
-    CORS_HEADERS = os.getenv("CORS_HEADERS", "").split(',')
+    CORS_ORIGINS = os.getenv("CORS_ORIGINS", "").split(",")
+    CORS_METHODS = os.getenv("CORS_METHODS", "").split(",")
+    CORS_HEADERS = os.getenv("CORS_HEADERS", "").split(",")
     ANONYMOUS_ENDPOINTS = [
         "/api/v1/health-check/",
         "/api/docs",

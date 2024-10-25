@@ -57,8 +57,12 @@ async def async_test_client() -> AsyncSession:
 
 
 @pytest.fixture()
-async def async_test_client_authorised(overridden_app: FastAPI, get_test_token) -> AsyncSession:
+async def async_test_client_authorised(
+    overridden_app: FastAPI, get_test_token
+) -> AsyncSession:
     async with AsyncClient(
-        app=overridden_app, base_url="http://test", headers={"Authorization": f"Bearer {get_test_token}"}
+        app=overridden_app,
+        base_url="http://test",
+        headers={"Authorization": f"Bearer {get_test_token}"},
     ) as async_client:
         yield async_client

@@ -18,10 +18,10 @@ class CacheMiddleware(BaseHTTPMiddleware):
     auth_scheme = HTTPBearer(auto_error=False)
 
     def __init__(
-            self,
-            app: FastAPI,
-            caching_repository: RedisRequestCachingService,
-            expire: timedelta = general_config.REDIS_CACHE_EXPIRE_TIME
+        self,
+        app: FastAPI,
+        caching_repository: RedisRequestCachingService,
+        expire: timedelta = general_config.REDIS_CACHE_EXPIRE_TIME,
     ) -> None:
         self.caching_repository = caching_repository
         self.expire = expire
@@ -41,26 +41,30 @@ class CacheMiddleware(BaseHTTPMiddleware):
         if cached_response:
             logger.info("Returning cached response...")
             return Response(
-                content=cached_response['content'],
+                content=cached_response["content"],
                 media_type="application/json",
-                status_code=cached_response['status_code']
+                status_code=cached_response["status_code"],
             )
 
-        response = await call_next(request)   # Cache miss: Proceed with the request to the actual handler
+        response = await call_next(
+            request
+        )  # Cache miss: Proceed with the request to the actual handler
 
         if response.status_code == 200:
             response_body = [chunk async for chunk in response.body_iterator]
             response_dict = {
                 "content": b"".join(response_body).decode("utf-8"),
-                "status_code": response.status_code
+                "status_code": response.status_code,
             }
 
             # Serialize and store the response in cache
             logger.info("Caching the request...")
-            await self.caching_repository.set_cache(cache_key, response_dict, self.expire)
+            await self.caching_repository.set_cache(
+                cache_key, response_dict, self.expire
+            )
             return Response(
                 content=response_dict["content"],
                 media_type="application/json",
-                status_code=response.status_code
+                status_code=response.status_code,
             )
         return response

@@ -29,29 +29,39 @@ class RequestService:
         :param raise_for_status: Flag indicating whether to raise exception in case URI returned any error code.
         :return: Response from URI.
         """
-        logger.info(f"Sending {method} request to {url} with data - {data}; params - {params}")
+        logger.info(
+            f"Sending {method} request to {url} with data - {data}; params - {params}"
+        )
         async with AsyncClient() as client:
             match method:
                 case HTTPMethodEnum.GET:
                     response = await client.get(url=url, headers=headers, params=params)
                 case HTTPMethodEnum.POST:
-                    response = await client.post(url=url, json=data, headers=headers, params=params)
+                    response = await client.post(
+                        url=url, json=data, headers=headers, params=params
+                    )
                 case HTTPMethodEnum.PUT:
-                    response = await client.put(url=url, json=data, headers=headers, params=params)
+                    response = await client.put(
+                        url=url, json=data, headers=headers, params=params
+                    )
                 case HTTPMethodEnum.DELETE:
-                    response = await client.delete(url=url, headers=headers, params=params)
+                    response = await client.delete(
+                        url=url, headers=headers, params=params
+                    )
         if raise_for_status:
-            RequestService.raise_for_status(status_code=response.status_code, response_text=response.text)
+            RequestService.raise_for_status(
+                status_code=response.status_code, response_text=response.text
+            )
         return response
 
     @staticmethod
     async def make_form_encoded_request(
-            url: str,
-            headers: dict = None,
-            data: dict = None,
-            method: Union[HTTPMethodEnum.POST, HTTPMethodEnum.PUT] = HTTPMethodEnum.POST,
-            params: dict = None,
-            raise_for_status: bool = True,
+        url: str,
+        headers: dict = None,
+        data: dict = None,
+        method: Union[HTTPMethodEnum.POST, HTTPMethodEnum.PUT] = HTTPMethodEnum.POST,
+        params: dict = None,
+        raise_for_status: bool = True,
     ):
         """
         Method for executing POST and PUT requests with form-encoded data.
@@ -66,15 +76,23 @@ class RequestService:
         :param raise_for_status: Flag indicating whether to raise exception in case URI returned any error code.
         :return: Response from URI.
         """
-        logger.info(f"Sending {method} request to {url} with data - {data}; params - {params}")
+        logger.info(
+            f"Sending {method} request to {url} with data - {data}; params - {params}"
+        )
         async with AsyncClient() as client:
             match method:
                 case HTTPMethodEnum.POST:
-                    response = await client.post(url=url, data=data, headers=headers, params=params)
+                    response = await client.post(
+                        url=url, data=data, headers=headers, params=params
+                    )
                 case HTTPMethodEnum.PUT:
-                    response = await client.put(url=url, data=data, headers=headers, params=params)
+                    response = await client.put(
+                        url=url, data=data, headers=headers, params=params
+                    )
         if raise_for_status:
-            RequestService.raise_for_status(status_code=response.status_code, response_text=response.text)
+            RequestService.raise_for_status(
+                status_code=response.status_code, response_text=response.text
+            )
         return response
 
     @staticmethod
@@ -87,7 +105,17 @@ class RequestService:
         """
         if 400 <= status_code < 500:
             logger.error(f"The request failed! Error message: {response_text}")
-            raise ClientError(content={"message": "External service error!", "metadata": response_text})
+            raise ClientError(
+                content={
+                    "message": "External service error!",
+                    "metadata": response_text,
+                }
+            )
         elif 500 <= status_code < 600:
             logger.error(f"Server error! Traceback: {response_text}")
-            raise ServerError(content={"message": "External service error!", "metadata": response_text})
+            raise ServerError(
+                content={
+                    "message": "External service error!",
+                    "metadata": response_text,
+                }
+            )

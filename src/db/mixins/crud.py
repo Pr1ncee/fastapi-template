@@ -25,7 +25,9 @@ class CRUDMixin:
     update_scheme: UpdateBaseSchema = None  # type: ignore
 
     @classmethod
-    async def _execute_commit(cls, query: expression, session: AsyncSession, commit: bool = True):
+    async def _execute_commit(
+        cls, query: expression, session: AsyncSession, commit: bool = True
+    ):
         await session.execute(query)
         if commit:
             await session.commit()
@@ -43,7 +45,9 @@ class CRUDMixin:
             await session.commit()
         except IntegrityError:
             await session.rollback()
-            raise HTTPException(detail=http_exc_text, status_code=status.HTTP_400_BAD_REQUEST)
+            raise HTTPException(
+                detail=http_exc_text, status_code=status.HTTP_400_BAD_REQUEST
+            )
         await session.refresh(obj)
         return obj
 
@@ -60,7 +64,9 @@ class CRUDMixin:
     @classmethod
     def _check_object(cls, obj: table) -> Union[bool, HTTPException]:
         if not obj:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Object not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Object not found"
+            )
         return True
 
     @classmethod
@@ -70,7 +76,9 @@ class CRUDMixin:
         return objects.scalars().all()
 
     @classmethod
-    async def retrieve(cls, pk: int, session: AsyncSession) -> Union[table, HTTPException]:
+    async def retrieve(
+        cls, pk: int, session: AsyncSession
+    ) -> Union[table, HTTPException]:
         query = select(cls.table).where(cls.get_pk_attr() == pk)
         res = await session.execute(query)
         obj = res.scalars().first()
@@ -79,7 +87,9 @@ class CRUDMixin:
         return obj
 
     @classmethod
-    async def bulk_retrieve(cls, pks: List[int], session: AsyncSession) -> List[table] or HTTPException:
+    async def bulk_retrieve(
+        cls, pks: List[int], session: AsyncSession
+    ) -> List[table] or HTTPException:
         query = select(cls.table).where(cls.get_pk_attr().in_(pks))
         res = await session.execute(query)
         objs = res.scalars().all()
@@ -96,7 +106,11 @@ class CRUDMixin:
         partial: bool = False,
     ) -> Union[table, HTTPException]:
         retrieved_obj = await cls.retrieve(pk, session)
-        query = update(cls.table).where(cls.get_pk_attr() == pk).values(**input_data.dict(exclude_unset=partial))
+        query = (
+            update(cls.table)
+            .where(cls.get_pk_attr() == pk)
+            .values(**input_data.dict(exclude_unset=partial))
+        )
         await cls._execute_commit(query, session)
         return retrieved_obj
 
@@ -109,12 +123,18 @@ class CRUDMixin:
         partial: bool = False,
     ) -> List[table] or HTTPException:
         retrieved_objs = await cls.bulk_retrieve(pks, session)
-        query = update(cls.table).where(cls.get_pk_attr().in_(pks)).values(**input_data.dict(exclude_unset=partial))
+        query = (
+            update(cls.table)
+            .where(cls.get_pk_attr().in_(pks))
+            .values(**input_data.dict(exclude_unset=partial))
+        )
         await cls._execute_commit(query, session)
         return retrieved_objs
 
     @classmethod
-    async def delete(cls, pk: int, session: AsyncSession, commit: bool = True) -> dict or HTTPException:
+    async def delete(
+        cls, pk: int, session: AsyncSession, commit: bool = True
+    ) -> dict or HTTPException:
         await cls.retrieve(pk, session)
         query = delete(cls.table).where(cls.get_pk_attr() == pk)
         await cls._execute_commit(query, session, commit)
@@ -168,19 +188,22 @@ class CRUDMixin:
 
     @classmethod
     async def get_paginated_data(
-            cls,
-            params: Params,
-            query: Select,
-            session: AsyncSession,
-            is_mapping: bool = False,
-            order_by: UnaryExpression = None
+        cls,
+        params: Params,
+        query: Select,
+        session: AsyncSession,
+        is_mapping: bool = False,
+        order_by: UnaryExpression = None,
     ) -> PaginatedData:
         try:
             count_query = query.with_only_columns(func.count()).order_by(None)
             res = await session.execute(count_query)
         except Exception as e:
             logger.error(f"Invalid input query! {e}")
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Query error, try again later")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Query error, try again later",
+            )
         count = res.scalar()
 
         total_pages = math.ceil(count / params.size) if params.size else 1
@@ -198,9 +221,12 @@ class CRUDMixin:
                 page=params.page,
                 pages=total_pages,
                 size=params.size,
-                total=count
+                total=count,
             )
 
         except Exception as e:
             logger.error(f"Invalid data query! {e}")
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Query error, try again later")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Query error, try again later",
+            )

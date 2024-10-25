@@ -1,1 +1,1 @@
-from src.core.exceptions.exceptions import *
+from src.core.exceptions.exceptions import *  # noqa
