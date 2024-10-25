@@ -12,10 +12,15 @@ I included the whole basic functionality based on my experience most projects us
 5. Ready-to-use Alembic;
 6. Ready-to-use SQLAlchemy with CRUDMixin;
 7. Authentication middleware;
-8. RequestService for making external HTTP requests
-9. Ready-to-use test environment.
+8. Caching middleware with Redis;
+9. RequestService for making external HTTP requests;
+10. Ready-to-use test environment.
 
-The application uses **Python 3.12** and all newest versions as in 2024-10-20. 
+The application uses **Python 3.12** and all newest versions as in 2024-10-20.
+
+There are two database declared in the `docker-compose.yml` file: 
+1. **PostgreSQL** as a primary database; 
+2. **Redis** for caching HTTP requests.
 
 ## Prerequisites
 

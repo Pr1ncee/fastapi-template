@@ -4,7 +4,7 @@ from typing import Union
 from httpx import Response, AsyncClient
 
 from src.core.exceptions import ClientError, ServerError
-from src.enums.http_methods_enum import HTTPMethodEnum
+from src.enums.http_method_enum import HTTPMethodEnum
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +29,7 @@ class RequestService:
         :param raise_for_status: Flag indicating whether to raise exception in case URI returned any error code.
         :return: Response from URI.
         """
+        logger.info(f"Sending {method} request to {url} with data - {data}; params - {params}")
         async with AsyncClient() as client:
             match method:
                 case HTTPMethodEnum.GET:
@@ -65,6 +66,7 @@ class RequestService:
         :param raise_for_status: Flag indicating whether to raise exception in case URI returned any error code.
         :return: Response from URI.
         """
+        logger.info(f"Sending {method} request to {url} with data - {data}; params - {params}")
         async with AsyncClient() as client:
             match method:
                 case HTTPMethodEnum.POST:

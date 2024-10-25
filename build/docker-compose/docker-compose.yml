@@ -8,12 +8,13 @@ services:
     restart: on-failure
     depends_on:
       - postgres
+      - redis
     volumes:
       - ../../:/app/
     env_file:
       - ../../.env
 
-  postgres:
+  postgres:  # Primary database
     restart: always
     image: postgres:15.8-alpine
     volumes:
@@ -23,5 +24,16 @@ services:
     env_file:
       - ../../.env
 
+  redis:  # Request caching database
+    image: redis:7.4.1-alpine
+    restart: always
+    env_file:
+      - ../../.env
+    ports:
+      - '6380:6379'
+    volumes:
+      - redis:/var/lib/redis/data
+
 volumes:
   postgres:
+  redis:

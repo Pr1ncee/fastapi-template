@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -20,6 +21,7 @@ class GeneralConfig:
         "/api/v1/user/confirm-sign-in",
     ]
     LRU_CACHE_MAX_SIZE = 16
+    REDIS_CACHE_EXPIRE_TIME = timedelta(minutes=10)
 
 
 class JWTConfig:
@@ -39,6 +41,12 @@ class PostgresConfig:
     ASYNC_URL = f"postgresql+asyncpg://{USER}:{PWD}@{HOST}:{PORT}/{NAME}"
 
 
+class RedisConfig:
+    HOST = os.getenv("REDIS_HOST", "redis")
+    PORT = int(os.getenv("REDIS_PORT", 6379))
+
+
 general_config = GeneralConfig()
 postgres_config = PostgresConfig()
 jwt_config = JWTConfig()
+redis_config = RedisConfig()

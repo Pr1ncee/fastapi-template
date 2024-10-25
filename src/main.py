@@ -6,10 +6,12 @@ from starlette_context import plugins
 from starlette_context.middleware import RawContextMiddleware
 
 from src.api.router import router
-from src.core.auth_middleware import AuthenticationMiddleware
+from src.core.middlewares.auth_middleware import AuthenticationMiddleware
 from src.core.config import general_config
 from src.core.exceptions.exception_handlers.middleware_exception_handlers import authentication_error_exception_handler
+from src.core.middlewares.cache_middleware import CacheMiddleware
 from src.core.setup_logging import setup_logging
+from src.dependency.cache_dependency import get_redis_request_caching_service
 
 setup_logging()
 
@@ -32,6 +34,11 @@ middlewares = [
         )
     ),
     Middleware(AuthenticationMiddleware, on_error=authentication_error_exception_handler),
+    Middleware(
+        CacheMiddleware,
+        caching_repository=get_redis_request_caching_service(),
+        expire=general_config.REDIS_CACHE_EXPIRE_TIME
+    )
 ]
 
 app = FastAPI(
