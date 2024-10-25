@@ -3,8 +3,7 @@ COMPOSE_FILE ?= ./build/docker-compose/docker-compose.yml
 SERVICE_NAME ?= fastapi-template
 ALEMBIC_CONFIG = src/alembic.ini
 
-DOTENV_BASE_FILE ?= .env
--include $(DOTENV_BASE_FILE)
+-include .$(PWD)/.env
 
 .PHONY: help
 help: # Display available commands
@@ -47,7 +46,11 @@ run-ruff: # Run ruff linter
 
 .PHONY: test
 test: # Run tests
-	docker compose -f $(COMPOSE_FILE) exec $(SERVICE_NAME) pytest -rP tests/.
+	docker compose -f $(COMPOSE_FILE) exec $(SERVICE_NAME) pytest tests/.
+
+.PHONY: show-cov-report
+show-cov-report: # Displays coverage report from the last pytest run
+	docker compose -f $(COMPOSE_FILE) exec $(SERVICE_NAME) coverage report --show-missing --fail-under $(COVERAGE_MINIMUM_PERCENT)
 
 .PHONY: build
 build: # Build docker image of the application
