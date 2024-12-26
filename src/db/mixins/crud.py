@@ -199,7 +199,7 @@ class CRUDMixin:
             count_query = query.with_only_columns(func.count()).order_by(None)
             res = await session.execute(count_query)
         except Exception as e:
-            logger.error(f"Invalid input query! {e}")
+            logger.error(f"Invalid input query!", extra={"e": e})
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Query error, try again later",
@@ -225,7 +225,7 @@ class CRUDMixin:
             )
 
         except Exception as e:
-            logger.error(f"Invalid data query! {e}")
+            logger.error(f"Invalid input query!", extra={"e": e})
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Query error, try again later",

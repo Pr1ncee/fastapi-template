@@ -36,16 +36,14 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 context["request"]: Request = request
                 context["user_info"] = user_info
                 context["access_token"]: str = authorization.credentials
-                logger.info(
-                    f"The user has been successfully authenticated. User info: {user_info}"
-                )
+                logger.info("The user has been successfully authenticated", extra={"user": user_info})
                 return await call_next(request)
             else:
-                logger.error("Authorization failed. No token")
+                logger.error("Authorization failed! No token")
                 raise AuthenticationError(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     content={"message": "No Token"},
                 )
-        except AuthenticationError as exc:
-            logger.error(f"Got error while authenticating the user: {exc}")
-            return self.on_error(request=request, exc=exc)
+        except AuthenticationError as e:
+            logger.error("Got error while authenticating the user", extra={"e": e})
+            return self.on_error(request=request, exc=e)

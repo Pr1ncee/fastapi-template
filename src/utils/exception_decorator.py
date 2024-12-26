@@ -20,22 +20,20 @@ def catch_exceptions(exceptions: tuple) -> Callable:
 
         @wraps(func)
         def wrapper(*args, **kwargs) -> dict | Coroutine | None:
-            error_msg = "Got error: <{0}> when calling function <{1}>"
+            error_msg = "Error occurred when calling the function"
             if asyncio.iscoroutinefunction(func):  # Handling async functions
 
                 async def async_wrapper() -> Callable | None:
                     try:
                         return await func(*args, **kwargs)
                     except exceptions as e:
-                        logger.exception(error_msg.format(e, func.__name__))
+                        logger.error(error_msg, extra={"e": e, "func": func.__name__})
 
                 return async_wrapper()
 
             try:  # Handling sync functions
                 return func(*args, **kwargs)
             except exceptions as e:
-                logger.exception(error_msg.format(e, func.__name__))
-
+                logger.error(error_msg, extra={"e": e, "func": func.__name__})
         return wrapper
-
     return decorator
