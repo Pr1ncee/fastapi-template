@@ -30,7 +30,8 @@ class RequestService:
         :return: Response from URI.
         """
         logger.info(
-            f"Sending {method} request to {url} with data - {data}; params - {params}"
+            f"Sending external HTTP request",
+            extra={"method": method, "url": url, "data": data, "params": params}
         )
         async with AsyncClient() as client:
             match method:
@@ -77,7 +78,8 @@ class RequestService:
         :return: Response from URI.
         """
         logger.info(
-            f"Sending {method} request to {url} with data - {data}; params - {params}"
+            f"Sending external HTTP request",
+            extra={"method": method, "url": url, "data": data, "params": params}
         )
         async with AsyncClient() as client:
             match method:
@@ -103,8 +105,9 @@ class RequestService:
         :param response_text: response body returned by URI
         :return: None
         """
+        error_msg, extra = "The request failed!", {"e": response_text}
         if 400 <= status_code < 500:
-            logger.error(f"The request failed! Error message: {response_text}")
+            logger.error(error_msg, extra=extra)
             raise ClientError(
                 content={
                     "message": "External service error!",
@@ -112,7 +115,7 @@ class RequestService:
                 }
             )
         elif 500 <= status_code < 600:
-            logger.error(f"Server error! Traceback: {response_text}")
+            logger.error(error_msg, extra=extra)
             raise ServerError(
                 content={
                     "message": "External service error!",

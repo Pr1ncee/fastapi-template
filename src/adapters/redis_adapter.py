@@ -4,7 +4,7 @@ from datetime import timedelta
 from redis import RedisError
 from redis.asyncio import Redis
 
-from src.core.config import general_config
+from src.core.config import redis_config
 from src.utils.exception_decorator import catch_exceptions
 from src.utils.json_serialization import deserialize_json, serialize_json
 
@@ -27,7 +27,7 @@ class RedisRequestCachingService:
         self,
         key: str,
         response: dict,
-        expire: timedelta = general_config.REDIS_CACHE_EXPIRE_TIME,
+        expire: timedelta = redis_config.CACHE_EXPIRE_TIME,
     ) -> None:
         await self.redis.setex(self.prefix + key, expire, serialize_json(response))
 

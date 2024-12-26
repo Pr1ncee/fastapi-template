@@ -21,7 +21,6 @@ class GeneralConfig:
         "/api/v1/user/confirm-sign-in",
     ]
     LRU_CACHE_MAX_SIZE = 16
-    REDIS_CACHE_EXPIRE_TIME = timedelta(minutes=10)
 
 
 class JWTConfig:
@@ -44,6 +43,7 @@ class PostgresConfig:
 class RedisConfig:
     HOST = os.getenv("REDIS_HOST", "redis")
     PORT = int(os.getenv("REDIS_PORT", 6379))
+    CACHE_EXPIRE_TIME = timedelta(minutes=10)
 
 
 general_config = GeneralConfig()
