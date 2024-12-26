@@ -12,10 +12,11 @@ from src.core.config import general_config, redis_config
 from src.core.exceptions.exception_handlers.middleware_exception_handlers import (
     authentication_error_exception_handler,
 )
-from src.core.setup_logging import setup_logging
+
+from src.core.logger import setup_logger
 from src.dependency.cache_dependency import get_redis_request_caching_service
 
-setup_logging()
+setup_logger()
 
 api_prefix = "/api"
 
