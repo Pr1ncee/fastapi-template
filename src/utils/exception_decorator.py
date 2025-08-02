@@ -1,7 +1,7 @@
 import asyncio
 import logging
+from collections.abc import Callable, Coroutine
 from functools import wraps
-from typing import Callable, Coroutine
 
 logger = logging.getLogger(__name__)
 
@@ -27,13 +27,17 @@ def catch_exceptions(exceptions: tuple) -> Callable:
                     try:
                         return await func(*args, **kwargs)
                     except exceptions as e:
-                        logger.error(error_msg, extra={"e": e, "func": func.__name__})
+                        logger.exception(error_msg, extra={"e": e, "func": func.__name__})
+                        return None
 
                 return async_wrapper()
 
             try:  # Handling sync functions
                 return func(*args, **kwargs)
             except exceptions as e:
-                logger.error(error_msg, extra={"e": e, "func": func.__name__})
+                logger.exception(error_msg, extra={"e": e, "func": func.__name__})
+                return None
+
         return wrapper
+
     return decorator

@@ -12,9 +12,8 @@ from src.core.config import general_config, redis_config
 from src.core.exceptions.exception_handlers.middleware_exception_handlers import (
     authentication_error_exception_handler,
 )
-
 from src.core.logger import setup_logger
-from src.dependency.cache_dependency import get_redis_request_caching_service
+from src.dependencies.cache_dependency import get_redis_request_caching_service
 
 setup_logger()
 
@@ -33,13 +32,11 @@ middlewares = [
         RawContextMiddleware,
         plugins=(plugins.RequestIdPlugin(), plugins.CorrelationIdPlugin()),
     ),
-    Middleware(
-        AuthenticationMiddleware, on_error=authentication_error_exception_handler
-    ),
+    Middleware(AuthenticationMiddleware, on_error=authentication_error_exception_handler),
     Middleware(
         CacheMiddleware,
         caching_repository=get_redis_request_caching_service(),
-        expire=redis_config.CACHE_EXPIRE_TIME,
+        expire=redis_config.CACHE_TTL,
     ),
 ]
 
@@ -56,4 +53,4 @@ app.openapi_version = "3.0.2"
 add_pagination(app)
 app.include_router(router, prefix=api_prefix)
 
-from src.core.exceptions.exception_handlers.core_exception_handlers import *  # noqa
+from src.core.exceptions.exception_handlers.core_exception_handlers import *

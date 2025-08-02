@@ -1,4 +1,4 @@
-from typing import Callable
+from collections.abc import Callable
 
 import pytest
 import pytest_asyncio
@@ -9,7 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from src.db.db import SQLALCHEMY_DATABASE_URL, get_session
 from src.main import app
-from src.services.jwt_service import JWTService
+from src.services.auth_service import AuthService
 
 
 @pytest.fixture(scope="session")
@@ -47,7 +47,7 @@ def overridden_app(override_get_db: Callable) -> FastAPI:
 @pytest.fixture(scope="session")
 async def get_test_token(db_session) -> str:
     test_payload = {}
-    return await JWTService.encode_token(payload=test_payload)
+    return await AuthService.encode_token(payload=test_payload)
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -56,10 +56,8 @@ async def async_test_client() -> AsyncSession:
         yield ac
 
 
-@pytest.fixture()
-async def async_test_client_authorised(
-    overridden_app: FastAPI, get_test_token
-) -> AsyncSession:
+@pytest.fixture
+async def async_test_client_authorised(overridden_app: FastAPI, get_test_token) -> AsyncSession:
     async with AsyncClient(
         app=overridden_app,
         base_url="http://test",

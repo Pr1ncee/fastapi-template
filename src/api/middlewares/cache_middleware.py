@@ -1,6 +1,6 @@
 import logging
+from collections.abc import Callable
 from datetime import timedelta
-from typing import Callable
 
 from fastapi import FastAPI, Request
 from fastapi.security import HTTPBearer
@@ -8,11 +8,12 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
 from starlette.status import HTTP_200_OK
 
-from src.core.config import redis_config
-from src.enums.http_method_enum import HTTPMethodEnum
+from src.adapters.enums.http_method_enum import HTTPMethodEnum
 from src.adapters.redis_adapter import RedisRequestCachingService
+from src.core.config import redis_config
 
 logger = logging.getLogger(__name__)
+
 
 class CacheMiddleware(BaseHTTPMiddleware):
     auth_scheme = HTTPBearer(auto_error=False)
@@ -21,13 +22,13 @@ class CacheMiddleware(BaseHTTPMiddleware):
         self,
         app: FastAPI,
         caching_repository: RedisRequestCachingService,
-        expire: timedelta = redis_config.CACHE_EXPIRE_TIME,
+        expire: timedelta = redis_config.CACHE_TTL,
     ) -> None:
         self.caching_repository = caching_repository
         self.expire = expire
         super().__init__(app)
 
-    async def dispatch(self, request: Request, call_next: Callable):
+    async def dispatch(self, request: Request, call_next: Callable) -> Response:
         if request.method.lower() != HTTPMethodEnum.GET.value:
             return await call_next(request)
 
@@ -59,9 +60,7 @@ class CacheMiddleware(BaseHTTPMiddleware):
 
             # Serialize and store the response in cache
             logger.info("Caching the request", extra=extra)
-            await self.caching_repository.set_cache(
-                cache_key, response_dict, self.expire
-            )
+            await self.caching_repository.set_cache(cache_key, response_dict, self.expire)
             return Response(
                 content=response_dict["content"],
                 media_type="application/json",

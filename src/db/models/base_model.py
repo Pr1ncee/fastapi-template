@@ -1,5 +1,5 @@
 from sqlalchemy import Column, DateTime
-from sqlalchemy.sql.functions import now, current_timestamp
+from sqlalchemy.sql.functions import current_timestamp, now
 
 from src.db.db import Base
 
@@ -16,8 +16,7 @@ class BaseModel(Base):
     )
 
     @classmethod
-    def pk_name(cls):
-        """Pick"""
+    def pk_name(cls) -> str:
         return cls.__mapper__.primary_key[0].name
 
     def as_dict(self) -> dict:

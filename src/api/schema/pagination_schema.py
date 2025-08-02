@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from fastapi import Query
 from pydantic import BaseModel
@@ -15,6 +15,6 @@ class PaginatedData(GenericModel, Generic[ModelItem]):
     total: int
 
 
-class Params(BaseModel):
+class PaginationParams(BaseModel):
     page: int = Query(1, ge=1, description="Page number")
     size: int = Query(50, ge=1, le=100, description="Page size")

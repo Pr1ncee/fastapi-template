@@ -20,7 +20,7 @@ class BaseEnum(Enum):
     @classmethod
     @lru_cache(general_config.LRU_CACHE_MAX_SIZE)
     def items(cls) -> tuple:
-        return tuple(zip(cls.values(), cls.names()))
+        return tuple(zip(cls.values(), cls.names(), strict=False))
 
     @classmethod
     @lru_cache(general_config.LRU_CACHE_MAX_SIZE)

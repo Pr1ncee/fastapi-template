@@ -9,17 +9,13 @@ from src.core.exceptions.exceptions import AuthenticationError
 logger = logging.getLogger(__name__)
 
 
-class JWTService:
+class AuthService:
     @staticmethod
-    async def decode_token(
-        token: str,
-        secret_key: str = jwt_config.JWT_SECRET_KEY,
-        verify_expiration: bool = True,
-    ) -> dict:
+    async def decode_token(token: str, verify_expiration: bool = True) -> dict:
         try:
             return jwt.decode(
                 jwt=token,
-                key=secret_key,
+                key=jwt_config.JWT_SECRET_KEY,
                 algorithms=[jwt_config.JWT_ALGORITHM],
                 options={"verify_exp": verify_expiration},
             )
@@ -37,7 +33,5 @@ class JWTService:
             ) from e
 
     @staticmethod
-    async def encode_token(
-        payload: dict, secret_key: str = jwt_config.JWT_SECRET_KEY
-    ) -> str:
-        return jwt.encode(payload, secret_key, algorithm=jwt_config.JWT_ALGORITHM)
+    async def encode_token(payload: dict) -> str:
+        return jwt.encode(payload, jwt_config.JWT_SECRET_KEY, algorithm=jwt_config.JWT_ALGORITHM)

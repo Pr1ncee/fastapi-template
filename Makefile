@@ -34,7 +34,7 @@ connect: # Connect to the running sbxc-be container
 	docker compose exec -it $(SERVICE_NAME) /bin/bash
 
 .PHONY: run-linters
-run-linters: run-black run-ruff # Run black & ruff linters
+run-linters: run-black run-ruff run-mypy # Run black, ruff and mypy linters
 
 .PHONY: run-black
 run-black: # Run black linter
@@ -43,6 +43,10 @@ run-black: # Run black linter
 .PHONY: run-ruff
 run-ruff: # Run ruff linter
 	docker compose exec $(SERVICE_NAME) ruff check --fix --unsafe-fixes .
+
+.PHONY: run-mypy
+run-mypy: # Run mypy type checker
+	docker compose exec $(SERVICE_NAME) mypy src/
 
 .PHONY: test
 test: # Run tests
