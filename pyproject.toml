@@ -1,0 +1,72 @@
+[project]
+name = "fastapi-template"
+version = "1.0.0"
+description = "FastAPI template application"
+requires-python = ">=3.13"
+
+[tool.ruff]
+lint.select = ["ALL"]
+exclude = [
+    "build",
+    ".git",
+    ".venv",
+    ".ruff_cache",
+    ".pytest_cache",
+    ".idea",
+    "migrations"
+]
+lint.ignore = [
+    "D", # Not enforcing doc strings at this time
+    "G004", # Allow logging using f-strings
+    "PLR0913", # Allow functions with > 5 args
+    "DTZ001", # deliberately use local timezone, as this is not a distributed application
+    "DTZ005", # deliberately use local timezone, as this is not a distributed application
+    "PTH123", # allow using open() instead of Path.open()
+    "F401", # allow importing unused objects in __init__.py
+    "SLF001", # Private member accessed: `_instance`
+    "TRY401", # Redundant exception object included in `logging.exception` call
+    "ANN003", # Missing type annotation for `**kwargs`
+    "ANN002", # Missing type annotation for `*args`
+    "RET505", # Unnecessary `elif` after `return` statement
+    "SIM117", # Use a single `with` statement with multiple contexts instead of nested `with` statements
+    "EXE002", # The file is executable but no shebang is present
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed in `_get_pk_attr`
+    "F403", # Checks for the use of wildcard imports
+    "RUF012", # Checks for mutable default values in class attributes
+    "ERA001", # Checks for commented-out Python code
+    "B008", # Do not perform function call `Depends` in argument defaults
+    "S105", # Possible hardcoded password assigned to: "FORCE_CHANGE_PASSWORD"
+    "FA100", # Add `from __future__ import annotations` to simplify `typing.Optional`
+    "FBT001", # Boolean-typed positional argument in function definition
+    "FBT002", # Boolean default positional argument in function definition
+    "TRY301", # Abstract `raise` to an inner function
+    "ARG001", # Unused function argument
+    "E402", # Module level import not at top of file
+    "B026", # Star-arg unpacking after a keyword argument is strongly discouraged
+]
+line-length = 120
+
+[tool.ruff.lint.pylint]
+max-statements = 75
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "ANN", # type annotations not requred in tests
+    "ARG", # unused function args for test fixtures
+    "PLW1510", # allow running processes without check=True
+    "S101", # asserts allowed in tests
+    "S603", # allow running processes without check=True
+    "S607", # allow running partial executable path
+    "FBT003", # allow boolean params in function calls
+]
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+plugins = ["sqlalchemy.ext.mypy.plugin"]
+python_version = "3.13"
+check_untyped_defs = true
+explicit_package_bases = true
+exclude = "venv/|.venv/|db.py|migrations/|postgres_adapter.py|base_model.py"
+ignore_missing_imports = true

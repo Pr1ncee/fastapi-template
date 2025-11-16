@@ -21,8 +21,10 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    env_file:
-      - ../../.env
+    environment:
+      POSTGRES_DB: fastapi-template
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
 
   redis:  # Request caching database
     image: redis:7.4.1-alpine
@@ -30,7 +32,7 @@ services:
     env_file:
       - ../../.env
     ports:
-      - '6380:6379'
+      - '6379:6379'
     volumes:
       - redis:/var/lib/redis/data
 

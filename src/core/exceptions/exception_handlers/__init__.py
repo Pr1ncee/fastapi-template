@@ -1,1 +1,1 @@
-from src.core.exceptions.exception_handlers import *  # noqa
+from src.core.exceptions.exception_handlers import *

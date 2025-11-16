@@ -14,20 +14,21 @@ logger = logging.getLogger(__name__)
 class RedisRequestCachingService:
     prefix = "request-cache:"
 
-    def __init__(self, redis: Redis):
+    def __init__(self, redis: Redis) -> None:
         self.redis = redis
 
     @catch_exceptions((RedisError,))
     async def get_cache(self, key: str) -> dict | None:
         if response := await self.redis.get(self.prefix + key):
             return deserialize_json(response)
+        return None
 
     @catch_exceptions((RedisError, TypeError))
     async def set_cache(
         self,
         key: str,
         response: dict,
-        expire: timedelta = redis_config.CACHE_EXPIRE_TIME,
+        expire: timedelta = redis_config.CACHE_TTL,
     ) -> None:
         await self.redis.setex(self.prefix + key, expire, serialize_json(response))
 

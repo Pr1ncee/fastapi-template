@@ -44,6 +44,11 @@ To shut it down, you can enter:
 make down
 ```
 
+> [!NOTE]
+> 
+> When adding a new database model, remember to import it in __init__.py file.
+
+
 ## Explore other available Make commands
 
 To display all available commands and their description, you can enter:

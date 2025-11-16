@@ -1,4 +1,4 @@
-from src.enums.base_enum import BaseEnum
+from src.core.enums.base_enum import BaseEnum
 
 
 class HTTPMethodEnum(BaseEnum):

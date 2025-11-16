@@ -6,7 +6,7 @@ class BaseError(Exception):
     status_code: int
     content: dict
 
-    def __init__(self, status_code: int = None, content: dict = None):
+    def __init__(self, status_code: int | None = None, content: dict | None = None) -> None:
         self.status_code = status_code or self.status_code
         self.content = content or self.content
 

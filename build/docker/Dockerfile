@@ -1,4 +1,4 @@
-FROM python:3.12.6-slim
+FROM python:3.13.2-slim
 
 WORKDIR /app
 
@@ -6,9 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl gcc \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY Pipfile Pipfile.lock ./
 RUN pip install pipenv && pipenv install --deploy --system --ignore-pipfile
