@@ -38,11 +38,14 @@ def override_get_db(db_session: AsyncSession) -> Callable:
     return _override_get_db
 
 
-@pytest.fixture(scope="session")
-def overridden_app(override_get_db: Callable) -> FastAPI:
+@pytest_asyncio.fixture(scope="session")
+async def overridden_app_without_cache(override_get_db: Callable) -> FastAPI:
+    main_app = app
     app.dependency_overrides[get_session] = override_get_db
+    main_app.user_middleware = [
+        middleware for middleware in main_app.user_middleware if middleware.cls.__name__ != "CacheMiddleware"
+    ]
     return app
-
 
 @pytest.fixture(scope="session")
 async def get_test_token(db_session) -> str:
@@ -57,9 +60,9 @@ async def async_test_client() -> AsyncSession:
 
 
 @pytest.fixture
-async def async_test_client_authorised(overridden_app: FastAPI, get_test_token) -> AsyncSession:
+async def async_test_client_authorised(overridden_app_without_cache: FastAPI, get_test_token) -> AsyncSession:
     async with AsyncClient(
-        app=overridden_app,
+        app=overridden_app_without_cache,
         base_url="http://test",
         headers={"Authorization": f"Bearer {get_test_token}"},
     ) as async_client:
