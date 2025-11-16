@@ -10,16 +10,12 @@ class GeneralConfig:
     CORS_ORIGINS = os.getenv("CORS_ORIGINS", "").split(",")
     CORS_METHODS = os.getenv("CORS_METHODS", "").split(",")
     CORS_HEADERS = os.getenv("CORS_HEADERS", "").split(",")
-    ANONYMOUS_ENDPOINTS = [
+    ANONYMOUS_ENDPOINTS = (
         "/api/v1/health-check/",
         "/api/docs",
         "/favicon.ico",
         "/api/openapi.json",
-        "api/docs",
-        "/api/v1/user/sign-in",
-        "/api/v1/user/sign-up",
-        "/api/v1/user/confirm-sign-in",
-    ]
+    )
     LRU_CACHE_MAX_SIZE = 16  # In bytes
 
 

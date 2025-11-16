@@ -68,5 +68,5 @@ plugins = ["sqlalchemy.ext.mypy.plugin"]
 python_version = "3.13"
 check_untyped_defs = true
 explicit_package_bases = true
-exclude = "venv/|.venv/|db.py|migrations/|crud.py|base_model.py"
+exclude = "venv/|.venv/|db.py|migrations/|postgres_adapter.py|base_model.py"
 ignore_missing_imports = true

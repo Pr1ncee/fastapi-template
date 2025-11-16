@@ -1,14 +1,13 @@
-from typing import Generic, TypeVar
+from collections.abc import Sequence
+from typing import Any
 
 from fastapi import Query
 from pydantic import BaseModel
 from pydantic.generics import GenericModel
 
-ModelItem = TypeVar("ModelItem")
 
-
-class PaginatedData(GenericModel, Generic[ModelItem]):
-    items: list[ModelItem]
+class PaginatedData(BaseModel):
+    items: Sequence[Any]
     page: int
     pages: int
     size: int

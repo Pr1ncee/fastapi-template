@@ -30,8 +30,20 @@ logs: # Follow logs of all running containers
 	docker compose logs --follow
 
 .PHONY: connect
-connect: # Connect to the running sbxc-be container
+connect: # Connect to the running fastapi-template container
 	docker compose exec -it $(SERVICE_NAME) /bin/bash
+
+.PHONY: create-migrations
+create-migrations: # Create an alembic migration
+	docker compose exec $(SERVICE_NAME) alembic --config $(ALEMBIC_CONFIG) revision --autogenerate --message auto
+
+.PHONY: migrations-upgrade
+migrations-upgrade: # Migrate to the latest migration
+	docker compose exec $(SERVICE_NAME) alembic --config $(ALEMBIC_CONFIG) upgrade head
+
+.PHONY: migrations-downgrade
+migrations-downgrade: # Migrate down by 1 migration
+	docker compose exec $(SERVICE_NAME) alembic --config $(ALEMBIC_CONFIG) downgrade -1
 
 .PHONY: run-linters
 run-linters: run-black run-ruff run-mypy # Run black, ruff and mypy linters
